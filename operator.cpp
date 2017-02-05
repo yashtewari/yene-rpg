@@ -1,190 +1,243 @@
+#include "operator.h"
 
-static bool Operator::is_valid_operation(
-		Agent agent,
-		operation_type operation,
-		vector< int > arguments,
-	) {
+constexpr int Operator::sleep_change[5];
+constexpr int Operator::calory_change[5];
+constexpr int Operator::operation_duration[5];
 
-	switch (operation) {
+bool Operator::is_valid_operation(
+        Agent agent,
+        operation_type operation,
+        vector< int > arguments
+    ) {
 
-		case SHOP: {
+    switch (operation) {
 
-			if (args.size() != 1) {
-				// cout << "Error: SHOP and EAT take only 1 argument" << endl;
-				return false;
-			}
-			else {
-				object_list inv = agent.get_inventory_state();
-				object_type obj = arguments[0];
+        case SHOP: {
 
-				if (!Object.instances[obj].can_be_exchanged_for(inv)) {
-					// cout << agent.name 
-					// << "does not have the inventory for this exchange" 
-					// << endl;
-					return false
-				}
-			}
+            if (arguments.size() != 1) {
+                // cout << "Error: SHOP takes only 1 argument" << endl;
+                return false;
+            }
+            else {
+                object_type obj = arguments[0];
 
-			return true;
-		}
+                if (obj == Object::VENISON) {
+                    // cout << "VENISON cannot be bought. Hunt!" << endl;
+                    return false;
+                }
 
-		case HUNT: {
-			if (args.size() != 0) {
-				// cout << "Error: HUNT takes only no arguments" << endl;
-				return false;
-			}
-			else {
-				object_list inv = agent.get_inventory_state();
-				object_type obj = Object.DEER_HEAD;
+                object_list inv = agent.get_inventory_state();
 
-				if (!Object.instances[obj].can_be_exchanged_for(inv)) {
-					// cout << agent.name 
-					// << "does not have the inventory for this hunt" 
-					// << endl;
-					return false;
-				}
-			}
+                if (!Object::instances[obj].can_be_exchanged_for(inv)) {
+                    // cout << agent.name 
+                    // << "does not have the inventory for this exchange" 
+                    // << endl;
+                    return false;
+                }
+            }
 
-			return true;
-		}
+            return true;
+        }
 
-		case SLEEP: {
+        case HUNT: {
+            if (arguments.size() != 0) {
+                // cout << "Error: HUNT takes only no arguments" << endl;
+                return false;
+            }
+            else {
 
-			if (args.size() != 0) {
-				// cout << "Error: SLEEP takes no arguments" << endl;
-				return false;
-			}
+                object_list inv = agent.get_inventory_state();
 
-			return true;
-		}
+                if (inv[int(Object::BOW)] < 1) {
+                    // cout << agent.name
+                    // << "does not have a bow... so kenot hunt"
+                    // << endl;
+                    return false;
+                }
 
-		case EAT: {
-			if (args.size() != 1) {
-				// cout << "Error: EAT takes only 1 argument" << endl;
-				return false;
-			}
-			else {
-				object_list inv = agent.get_inventory_state();
-				object_type obj = arguments[0];
+                object_type obj = Object::VENISON;
+                Object venison_instance = Object::instances[obj];
 
-				if (inv[obj] <= 0) {
-					// cout << agent.name << "cannot eat this item because"
-					// << "it is not present in inventory" << endl;
-					return false;
-				}
+                if (!venison_instance.can_be_exchanged_for(inv)) {
+                    // cout << agent.name 
+                    // << "does not have the inventory for this hunt" 
+                    // << endl;
+                    return false;
+                }
+            }
 
-				if(!Object.instances[obj].is_edible()) {
-					// cout << agent.name << "cannot eat this item because"
-					// << "it is inedible." << endl;
-					return false;
-				}
-			}
+            return true;
+        }
 
-			return true;
-		}
-	}
+        case SLEEP: {
+
+            if (arguments.size() != 0) {
+                // cout << "Error: SLEEP takes no arguments" << endl;
+                return false;
+            }
+
+            return true;
+        }
+
+        case EAT: {
+            if (arguments.size() != 1) {
+                // cout << "Error: EAT takes only 1 argument" << endl;
+                return false;
+            }
+            else {
+                object_list inv = agent.get_inventory_state();
+                object_type obj = arguments[0];
+
+                if (inv[obj] <= 0) {
+                    // cout << agent.name << "cannot eat this item because"
+                    // << "it is not present in inventory" << endl;
+                    return false;
+                }
+
+                if(!Object::instances[obj].is_edible()) {
+                    // cout << agent.name << "cannot eat this item because"
+                    // << "it is inedible." << endl;
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        case SELL: {
+
+            if (arguments.size() != 1) {
+                // cout << "Error: SELL takes only 1 argument" << endl;
+                return false;
+            }
+            else {
+                object_list inv = agent.get_inventory_state();
+                object_type obj = arguments[0];
+
+                if (inv[obj] < 1) {
+                    // cout << agent.name 
+                    // << "does not have this item to sell" 
+                    // << endl;
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
 
 }
 
-static void Operator::perform_operation(
-		Agent &agent,
-		operation_type operation,
-		vector< int > arguments
-	) {
+void Operator::perform_operation(
+        Agent &agent,
+        operation_type operation,
+        vector< int > arguments
+    ) {
 
-	if (!is_valid_operation(agent, operation, args)) {
+    // change sleep and calories as per usage
+    // perform_common_state_changes(agent, operation);
 
-		cout << agent.name 
-		<< "cannot perform operation " << operation 
-		<< "with the given arguments" << endl
-		<< "Use Operator.is_valid_operation()" << endl;
+    switch (operation) {
+        case SHOP: {
 
-		return false;
-	}
+            object_type item_to_buy = arguments[0];
+            perform_shop_operation(agent, item_to_buy);
+        }
 
-	// change sleep and calories as per usage
-	// perform_common_state_changes(agent, operation);
+        case HUNT: {
 
-	switch (operation) {
-		case SHOP: {
+            perform_hunt_operation(agent);
+        }
 
-			object_type item_to_buy = arguments[0];
-			perform_shop_operation(agent, item_to_buy);
-			return true;
-		}
+        case SLEEP: {
 
-		case HUNT: {
+            perform_sleep_operation(agent);
+        }
 
-			perform_hunt_operation(agent);
-			return true;
-		}
+        case EAT: {
 
-		case SLEEP: {
+            object_type item_to_eat = arguments[0];
+            perform_eat_operation(agent, item_to_eat);
+        }
 
-			perform_sleep_operation(agent);
-			return true;
-		}
+        case SELL: {
 
-		case EAT: {
-
-			object_type item_to_eat = arguments[0];
-			perform_eat_operation(agent, item_to_eat);
-			return true;
-		}
-	}
+            object_type item_to_sell = arguments[0];
+            perform_sell_operation(agent, item_to_sell);
+        }
+    }
 }
 
-static void Operator::perform_common_state_changes(
-		Agent &agent, 
-		operation_type operation
-	) {
+void Operator::perform_common_state_changes(
+        Agent &agent, 
+        operation_type operation
+    ) {
 
-	agent.change_sleep_state_by(Operator.sleep_change[operation]);
-	agent.change_calories_state_by(Operator.calory_change[operation]);
+    agent.decrement_turn_counter();
+    agent.change_sleep_state_by(Operator::sleep_change[operation]);
+    agent.change_calories_state_by(Operator::calory_change[operation]);
 }
 
-static void Operator::perform_shop_operation(
-		Agent &agent,
-		object_type item_to_buy
-	) {
+void Operator::perform_shop_operation(
+        Agent &agent,
+        object_type item_to_buy
+    ) {
 
-	object_instance = Object.instances[item_to_buy];
+    Object object_instance = Object::instances[item_to_buy];
 
-	object_list old_inv = agent.get_inventory_state();
-	object_list new_inv = object_instance.subtract_worth_from(old_inv);
+    object_list old_inv = agent.get_inventory_state();
+    object_list new_inv = object_instance.subtract_worth_from(old_inv);
 
-	new_inv[item_to_buy]++;
+    new_inv[item_to_buy]++;
 
-	agent.set_inventory_state(new_inv);
+    agent.set_inventory_state(new_inv);
 }
 
-static void Operator::perform_hunt_operation(Agent &agent) {
+void Operator::perform_hunt_operation(Agent &agent) {
 
-	// for now, the DEER_HEAD object holds the exchange_value definition
-	object_type item_to_hunt = Object.DEER_HEAD;
-	object_instance = Object.instances[item_to_hunt];
+    // for now, the VENISON object holds the exchange_value definition
+    object_type item_to_hunt = Object::VENISON;
+    Object object_instance = Object::instances[item_to_hunt];
 
-	object_list old_inv = agent.get_inventory_state();
-	object_list new_inv = object_instance.subtract_worth_from(old_inv);
+    object_list old_inv = agent.get_inventory_state();
+    object_list new_inv = object_instance.subtract_worth_from(old_inv);
 
-	object_type additional_item = Object.VENISON;
-	new_inv[item_to_hunt]++;
-	new_inv[additional_item]++;
+    object_type additional_item = Object::DEER_HEAD;
+    new_inv[item_to_hunt]++;
+    new_inv[additional_item]++;
 
-	agent.set_inventory_state(new_inv);
+    agent.set_inventory_state(new_inv);
 }
 
-static void Operator::perform_sleep_operation(Agent &agent) {
-	return;
+void Operator::perform_sleep_operation(Agent &agent) {
+    return;
 }
 
-static void Operator::perform_eat_operation(
-		Agent &agent,
-		object_type item_to_eat
-	) {
+void Operator::perform_eat_operation(
+        Agent &agent,
+        object_type item_to_eat
+    ) {
 
-	object_instance = Object.instances[item_to_eat];
+    Object object_instance = Object::instances[item_to_eat];
 
-	agent.change_calories_state_by(object_instance.get_calories());
-	return true;
+    agent.change_calories_state_by(object_instance.get_calories());
 }
+
+void Operator::perform_sell_operation(
+        Agent &agent,
+        object_type item_to_sell
+    ) {
+
+    Object object_instance = Object::instances[item_to_sell];
+
+    object_list old_inv = agent.get_inventory_state();
+    object_list new_inv = object_instance.add_worth_to(old_inv);
+
+    new_inv[item_to_sell]--;
+
+    agent.set_inventory_state(new_inv);
+} 
+
+// int main() {
+//     return 0;
+// }

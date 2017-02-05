@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "types.h"
-#include "objects.h"
+// #include "objects.h"
 using namespace std;
 
 class Agent {
@@ -14,7 +14,7 @@ private:
     // the operation currently being completed
     operation_type current_operation;
     vector< int > current_operation_arguments;
-    int remaining_turns_count;
+    int turns_remaining_for_current_operation;
 
 
 public:
@@ -29,14 +29,22 @@ public:
     int get_calories_state();
     object_list get_inventory_state();
 
+    operation_type get_current_operation();
+    vector< int > get_current_operation_arguments();
+
     void change_sleep_state_by(int amount_to_change);
     void change_calories_state_by(int amount_to_change);
     void set_inventory_state(object_list new_inventory);
 
     bool is_busy();
-    int get_remaining_turns_count();
+    int get_turns_remaining_for_current_operation();
+    void decrement_turn_counter();
 
-    // will set the operation and return true
-    // iff (operation is valid) and (agent is not busy)
-    bool try_and_set_next_operation(operation_type, vector< int > arguments);
+    void set_next_operation(
+        operation_type, 
+        vector< int > arguments = {},
+        int turns_required = 0
+    );
+
+    void print();
 };
