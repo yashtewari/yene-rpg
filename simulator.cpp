@@ -66,8 +66,12 @@ bool Simulator::perform_next_step() {
     return true;
 }
 
-void Simulator::print() {
+vector< Agent > Simulator::get_all_agents() {
+    return agents;
+}
+
+void Simulator::print_state() {
     for (int i = 0; i < agents.size(); i++) {
-        agents[i].print();
+        agents[i].print_state();
     }
 }

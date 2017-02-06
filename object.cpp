@@ -131,7 +131,3 @@ object_list Object::add_worth_to(object_list these_objects) {
 
     return these_objects;
 }
-
-// int main() {
-//     return 0;
-// }

@@ -14,9 +14,11 @@ int main() {
         }
         if (Simulator::perform_next_step()) {
             cout << "TURN " << Simulator::turn_count << endl;
-            Simulator::print(); 
+            Simulator::print_state(); 
         }
     }
+
+    cout << a.get_sleep_state() << endl;
 
     return 0;
 }

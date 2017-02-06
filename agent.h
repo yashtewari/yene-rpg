@@ -48,5 +48,5 @@ public:
         int turns_required = 0
     );
 
-    void print();
+    void print_state();
 };

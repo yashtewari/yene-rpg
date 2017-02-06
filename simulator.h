@@ -25,5 +25,7 @@ public:
     // performs a step for all agents
     static bool perform_next_step();
 
-    static void print();
+    static vector< Agent > get_all_agents();
+
+    static void print_state();
 };

@@ -95,7 +95,7 @@ void print_spaces(string prefix, int count) {
 		cout << " ";
 }
 
-void Agent::print() {
+void Agent::print_state() {
 	cout << "###" << endl;
 	cout << "Sleep:"; print_spaces("Sleep:", 15); 
 	cout << sleep_remaining << endl;
