@@ -16,6 +16,7 @@ bool Operator::is_valid_operation(
         case SHOP: {
 
             if (arguments.size() != 1) {
+
                 cout << "Error: SHOP takes only 1 argument" << endl;
                 return false;
             }
@@ -23,6 +24,7 @@ bool Operator::is_valid_operation(
                 object_type obj = arguments[0];
 
                 if (obj == Object::VENISON) {
+
                     cout << "VENISON cannot be bought. Hunt!" << endl;
                     return false;
                 }
@@ -30,6 +32,7 @@ bool Operator::is_valid_operation(
                 object_list inv = agent.get_inventory_state();
 
                 if (!Object::instances[obj].can_be_exchanged_for(inv)) {
+
                     cout << agent.get_name() 
                     << " does not have the inventory for this exchange" 
                     << endl;
@@ -42,6 +45,7 @@ bool Operator::is_valid_operation(
 
         case HUNT: {
             if (arguments.size() != 0) {
+
                 cout << "Error: HUNT takes only no arguments" << endl;
                 return false;
             }
@@ -50,6 +54,7 @@ bool Operator::is_valid_operation(
                 object_list inv = agent.get_inventory_state();
 
                 if (inv[int(Object::BOW)] < 1) {
+
                     cout << agent.get_name()
                     << " does not have a bow... so kenot hunt"
                     << endl;
@@ -60,19 +65,21 @@ bool Operator::is_valid_operation(
                 Object venison_instance = Object::instances[obj];
 
                 if (!venison_instance.can_be_exchanged_for(inv)) {
+
                     cout << agent.get_name() 
                     << " does not have the inventory for this hunt" 
                     << endl;
                     return false;
                 }
             }
-            cerr << "Hunting conditions met" << endl;
+        
             return true;
         }
 
         case SLEEP: {
 
             if (arguments.size() != 0) {
+
                 cout << "Error: SLEEP takes no arguments" << endl;
                 return false;
             }
@@ -82,6 +89,7 @@ bool Operator::is_valid_operation(
 
         case EAT: {
             if (arguments.size() != 1) {
+
                 cout << "Error: EAT takes only 1 argument" << endl;
                 return false;
             }
@@ -92,12 +100,14 @@ bool Operator::is_valid_operation(
                 for (auto x : inv) {cout << x.first << " " << x.second << endl;}
 
                 if (inv[obj] <= 0) {
+
                     cout << agent.get_name() << " cannot eat this item because"
                     << " it is not present in inventory" << endl;
                     return false;
                 }
 
                 if(!Object::instances[obj].is_edible()) {
+
                     cout << agent.get_name() << " cannot eat this item because"
                     << " it is inedible." << endl;
                     return false;
@@ -110,6 +120,7 @@ bool Operator::is_valid_operation(
         case SELL: {
 
             if (arguments.size() != 1) {
+
                 cout << "Error: SELL takes only 1 argument" << endl;
                 return false;
             }
@@ -118,6 +129,7 @@ bool Operator::is_valid_operation(
                 object_type obj = arguments[0];
 
                 if (inv[obj] < 1) {
+
                     cout << agent.get_name() 
                     << "does not have this item to sell" 
                     << endl;
@@ -203,8 +215,8 @@ void Operator::perform_shop_operation(
 
 void Operator::perform_hunt_operation(Agent &agent) {
 
-    // for now, the VENISON object holds the exchange_value definition
-    cerr << "Hunting!" << endl;
+    // for now, the VENISON object holds the exchange_rate definition that is
+    // applicable to the HUNT operation... 1 venison == 2 arrows
     
     object_type item_to_hunt = Object::VENISON;
     Object object_instance = Object::instances[item_to_hunt];
@@ -249,8 +261,4 @@ void Operator::perform_sell_operation(
     new_inv[item_to_sell]--;
 
     agent.set_inventory_state(new_inv);
-} 
-
-// int main() {
-//     return 0;
-// }
+}

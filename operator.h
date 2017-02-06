@@ -9,6 +9,8 @@ using namespace std;
 class Operator {
 public:
     // TODO: find a way to do this better
+    static const operation_type INVALID = -1;
+
     static const operation_type SHOP    = 0;
     static const operation_type HUNT    = 1;
     static const operation_type SLEEP   = 2;

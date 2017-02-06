@@ -1,4 +1,5 @@
 #include "agent.h"
+#include "operator.h"
 #include <iostream>
 
 Agent::Agent(
@@ -13,7 +14,7 @@ Agent::Agent(
 	sleep_remaining = initial_sleep;
 	calories_remaining = initial_calories;
 
-	current_operation = -100;
+	current_operation = Operator::INVALID;
 	turns_remaining_for_current_operation = 0;
 
 	inventory = intial_inventory;
