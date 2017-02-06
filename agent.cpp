@@ -9,12 +9,28 @@ Agent::Agent(
     ) {
 
 	this->name = name;
-	this->inventory = intial_inventory;
-	this->sleep_remaining = initial_sleep;
-	this->calories_remaining = initial_calories;
+
+	sleep_remaining = initial_sleep;
+	calories_remaining = initial_calories;
 
 	current_operation = -100;
 	turns_remaining_for_current_operation = 0;
+
+	inventory = intial_inventory;
+
+	Object::initialize();
+	for (object_type i = 0; i < Object::get_object_count(); i++) {
+
+		// initialize all objects in each agent's inventory to 0
+		// provided some other value for them isn't given
+		if (inventory.find(i) == inventory.end()) {
+			inventory[i] = 0;
+		}
+	}
+}
+
+string Agent::get_name() {
+	return name;
 }
 
 int Agent::get_sleep_state() {
@@ -72,11 +88,26 @@ void Agent::set_next_operation(
 	turns_remaining_for_current_operation = turns_required;
 }
 
-void Agent::print() {
-	cout << name << "has " << calories_remaining << " calories and "
-	<< sleep_remaining << " sleep left." << endl;
+void print_spaces(string prefix, int count) {
+	count -= prefix.length();
+	while (count--)
+		cout << " ";
 }
 
-// int main() {
-// 	return 0;
-// }
+void Agent::print() {
+	cout << "###" << endl;
+	cout << "Sleep:"; print_spaces("Sleep:", 15); 
+	cout << sleep_remaining << endl;
+	cout << "Calory:"; print_spaces("Calory:", 15); 
+	cout << calories_remaining << endl;
+
+	cout << "..." << endl;
+	for (object_type i = 0; i < Object::get_object_count(); i++) {
+
+		cout << Object::instances[i].get_name();
+		print_spaces(Object::instances[i].get_name(), 15);
+		cout << inventory[i] << endl;
+	}
+
+	cout << "###" << endl << endl;
+}

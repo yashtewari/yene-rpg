@@ -1,6 +1,8 @@
-#include "objects.h"
+#include "object.h"
+#include <iostream>
 // static functions: these don't affect instances
 
+bool Object::is_initialized = false;
 vector< Object > Object::instances(Object::total_instances);
 
 int Object::get_object_count() {
@@ -9,6 +11,10 @@ int Object::get_object_count() {
 
 void Object::initialize() {
 
+    if (is_initialized) {
+        return;
+    }
+    is_initialized = true;
     instances[GOLD] = Object(
         "Gold",
         // exchange_rate: 1 gold for 1 gold, lol
@@ -87,6 +93,7 @@ int Object::get_calories() {
 }
 
 bool Object::is_edible() {
+    cout << name << " " << calories << endl;
     return (calories == 0 ? false : true);
 }
 

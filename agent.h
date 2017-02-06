@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "types.h"
+#include "object.h"
 // #include "objects.h"
 using namespace std;
 
@@ -25,6 +26,7 @@ public:
         int initial_calories
     );
 
+    string get_name();
     int get_sleep_state();
     int get_calories_state();
     object_list get_inventory_state();

@@ -19,6 +19,7 @@ public:
     static vector< Object > instances;
     static int get_object_count();
 
+    static bool is_initialized;
     static void initialize();
 
     Object(

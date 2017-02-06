@@ -2,7 +2,7 @@
 #include <vector>
 #include "types.h"
 #include "agent.h"
-#include "objects.h"
+#include "object.h"
 using namespace std;
 
 // TODO: this class should have instances
