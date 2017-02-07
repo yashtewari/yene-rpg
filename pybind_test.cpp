@@ -32,9 +32,11 @@ PYBIND11_PLUGIN(rpg) {
 
     py::class_<Agent>(mod, "Agent")
         .def(py::init<std::string, object_list, int, int>())
+        .def("get_name", &Agent::get_name)
         .def("get_sleep_state", &Agent::get_sleep_state)
         .def("get_calory_state", &Agent::get_calories_state)
-        .def("get_inventory_state", &Agent::get_inventory_state);
+        .def("get_inventory_state", &Agent::get_inventory_state)
+        .def("print_state", &Agent::print_state);
 
 
     py::class_<Operator>(mod, "Operator", py::metaclass())
