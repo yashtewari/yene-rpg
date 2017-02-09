@@ -1,35 +1,41 @@
-SOURCES=simulator.cpp operator.cpp agent.cpp object.cpp
-OBJECTS=$(subst .cpp,.o,$(SOURCES))
+SIM_PATH=simulator/
+SIM_SRCS=python_wrapper.cpp main.cpp simulator.cpp operator.cpp agent.cpp object.cpp
+SRCS=$(addprefix $(SIM_PATH),$(SIM_SRCS))
+
+TRAIN_PATH=trainer/
+PY_PKG=$(TRAIN_PATH)rpg.so
+
+OBJS=$(subst .cpp,.o,$(SRCS))
 
 FLAGS=-std=c++11 -fPIC
-PYBIND_FLAGS=-shared -I pybind11/include `python-config --cflags --ldflags` 
+PYBIND_FLAGS=-shared -I $(SIM_PATH)pybind11/include `python-config --cflags --ldflags` 
 RM=rm -f
 
-rpg.so: pybind_test.o $(OBJECTS)
-	g++ $(FLAGS) $(PYBIND_FLAGS) pybind_test.o $(OBJECTS) -o rpg.so
+$(PY_PKG): $(OBJS)
+	g++ $(FLAGS) $(PYBIND_FLAGS) $(OBJS) -o $(PY_PKG)
 
-simulator.test: main.o $(OBJECTS)
-	g++ $(FLAGS) -o simulator.test main.o $(OBJECTS)
+$(SIM_PATH)simulator.test: $(OBJS)
+	g++ $(FLAGS) -o $(SIM_PATH)simulator.test $(OBJS)
 
-pybind_test.o: simulator.h pybind_test.cpp
-	g++ $(FLAGS) $(PYBIND_FLAGS) -c pybind_test.cpp
+$(SIM_PATH)python_wrapper.o: $(SIM_PATH)simulator.h $(SIM_PATH)python_wrapper.cpp
+	g++ $(FLAGS) $(PYBIND_FLAGS) -c $(SIM_PATH)python_wrapper.cpp -o $(SIM_PATH)python_wrapper.o
 
-main.o: simulator.h main.cpp
-	g++ $(FLAGS) -c main.cpp
+$(SIM_PATH)main.o: $(SIM_PATH)simulator.h $(SIM_PATH)main.cpp
+	g++ $(FLAGS) -c $(SIM_PATH)main.cpp -o $(SIM_PATH)main.o
 
-simulator.o: simulator.h simulator.cpp
-	g++ $(FLAGS) -c simulator.cpp
+$(SIM_PATH)simulator.o: $(SIM_PATH)simulator.h $(SIM_PATH)simulator.cpp
+	g++ $(FLAGS) -c $(SIM_PATH)simulator.cpp -o $(SIM_PATH)simulator.o
 
-operator.o: operator.h operator.cpp
-	g++ $(FLAGS) -c operator.cpp
+$(SIM_PATH)operator.o: $(SIM_PATH)operator.h $(SIM_PATH)operator.cpp
+	g++ $(FLAGS) -c $(SIM_PATH)operator.cpp -o $(SIM_PATH)operator.o
 
-agent.o: agent.h operator.h agent.cpp
-	g++ $(FLAGS) -c agent.cpp
+$(SIM_PATH)agent.o: $(SIM_PATH)agent.h $(SIM_PATH)operator.h $(SIM_PATH)agent.cpp
+	g++ $(FLAGS) -c $(SIM_PATH)agent.cpp -o $(SIM_PATH)agent.o
 
-object.o: object.h object.cpp
-	g++ $(FLAGS) -c object.cpp
+$(SIM_PATH)object.o: $(SIM_PATH)object.h $(SIM_PATH)object.cpp
+	g++ $(FLAGS) -c $(SIM_PATH)object.cpp -o $(SIM_PATH)object.o
 
 
 clean:
-	$(RM) $(OBJECTS)
+	$(RM) $(OBJS) 
 

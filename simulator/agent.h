@@ -30,6 +30,7 @@ public:
     int get_sleep_state();
     int get_calories_state();
     object_list get_inventory_state();
+    void print_state();
 
     operation_type get_current_operation();
     vector< int > get_current_operation_arguments();
@@ -47,6 +48,4 @@ public:
         vector< int > arguments = {},
         int turns_required = 0
     );
-
-    void print_state();
 };
