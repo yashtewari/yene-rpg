@@ -56,10 +56,24 @@ vector< int > Agent::get_current_operation_arguments() {
 
 void Agent::change_sleep_state_by(int amount_to_change) {
 	sleep_remaining += amount_to_change;
+
+	if (sleep_remaining < MIN_SLEEP) {
+		sleep_remaining = MIN_SLEEP;
+	}
+	else if (sleep_remaining > MAX_SLEEP) {
+		sleep_remaining = MAX_SLEEP;
+	}
 }
 
 void Agent::change_calories_state_by(int amount_to_change) {
 	calories_remaining += amount_to_change;
+
+	if (calories_remaining < MIN_CALORIES) {
+		calories_remaining = MIN_CALORIES;
+	}
+	else if (calories_remaining > MAX_CALORIES) {
+		calories_remaining = MAX_CALORIES;
+	}
 }
 
 void Agent::set_inventory_state(object_list new_inventory) {

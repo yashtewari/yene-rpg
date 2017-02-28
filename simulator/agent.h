@@ -12,6 +12,12 @@ private:
     int sleep_remaining;
     int calories_remaining;
 
+    // constants
+    static const int MAX_SLEEP = 18;
+    static const int MIN_SLEEP = 0;
+    static const int MAX_CALORIES = 2000;
+    static const int MIN_CALORIES = 0;
+
     // the operation currently being completed
     operation_type current_operation;
     vector< int > current_operation_arguments;
